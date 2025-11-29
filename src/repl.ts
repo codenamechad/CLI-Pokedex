@@ -18,14 +18,16 @@ return input.trim().toLowerCase().split(' ').filter(e => e.length > 0);
 
 
 
-export async function startREPL(state: State){
+export async function startREPL(state: State, ...args: string[]){
     state.readline.prompt()
     state.readline.on("line", async (text) => {
-        const commandName = cleanInput(text)[0]
+        const parts = cleanInput(text)
+        const commandName = parts[0]
         const command = state.commands[commandName]
+        const args = parts.slice(1)
         if(command){
             try{
-             await command.callback(state)
+             await command.callback(state, ...args)
         } catch(err) {
             console.error("Error:", err)
         }
